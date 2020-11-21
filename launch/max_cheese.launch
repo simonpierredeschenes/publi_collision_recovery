@@ -1,0 +1,67 @@
+<launch>
+	<param name="/use_sim_time" value="true"/>
+        <arg name="real_time" value="true"/>
+
+	<node pkg="tf" type="static_transform_publisher" name="static_transform_publisher_node" args="0.0 0.0 -0.04 0.0 0.0 0.0 imu_link os1_lidar 100"/>
+
+        <include file="$(find ouster_ros)/os1.launch">
+                <arg name="lidar_mode" value="1024x10"/>
+                <arg name="replay" value="true"/>
+        </include>
+
+        <node pkg="pointcloud_motion_deskew" type="pointcloud2_deskew_node" name="pointcloud2_deskew_node" output="screen">
+                <remap from="input_point_cloud" to="/os1_cloud_node/points"/>
+                <remap from="output_point_cloud" to="/os1_cloud_node/points_deskewed"/>
+                <param name="fixed_frame_for_laser" value="odom"/>
+        </node>
+
+        <node pkg="imu_odom" type="imu_odom_node" name="imu_odom_node" output="screen">
+                <remap from="imu_topic" to="/vectornav/IMU"/>
+                <param name="odom_frame" value="odom"/>
+                <param name="robot_frame" value="imu_link"/>
+                <param name="imu_frame" value="imu_link"/>
+                <param name="real_time" value="$(arg real_time)"/>
+        </node>
+
+        <node pkg="norlab_icp_mapper_ros" type="mapper_node" name="mapper_node" output="screen">
+                <param name="sensor_frame" value="os1_lidar"/>
+                <param name="robot_frame" value="imu_link"/>
+                <param name="odom_frame" value="odom"/>
+                <param name="icp_config" value="$(find publi_collision_recovery)/params/max_gun_icp_config.yaml"/>
+                <param name="input_filters_config" value="$(find publi_collision_recovery)/params/max_gun_input_filters.yaml"/>
+                <param name="map_post_filters_config" value="$(find publi_collision_recovery)/params/max_gun_post_filters.yaml"/>
+                <param name="map_update_condition" value="overlap"/>
+                <param name="map_update_overlap" value="0.9"/>
+                <param name="sensor_max_range" value="100.0"/>
+                <param name="min_dist_new_point" value="0.05"/>
+                <param name="compute_prob_dynamic" value="true"/>
+                <param name="prior_dynamic" value="0.2" />
+                <param name="threshold_dynamic" value="0.5" />
+                <param name="beam_half_angle" value="0.02" />
+                <param name="epsilon_a" value="0.1" />
+                <param name="epsilon_d" value="0.1" />
+                <param name="alpha" value="0.99" />
+                <param name="beta" value="0.9" />
+                <param name="is_3D" value="true" />
+                <param name="compute_prob_dynamic" value="true" />
+                <param name="map_tf_publish_rate" value="100" />
+                <param name="is_online" value="$(arg real_time)"/>
+
+		<param name="use_skew_weights" value="false"/>
+                <param name="skew_model" value="3"/>
+                <param name="corner_point_weight" value="1.0"/>
+                <param name="weight_quantile" value="0.0"/>
+                <param name="range_precision" value="0.02"/>
+
+                <remap from="points_in" to="/os1_cloud_node/points_deskewed"/>
+                <param name="is_mapping" value="false"/>
+                <param name="compute_residual" value="false"/>
+                <!-- <param name="final_map_file_name" value="/hdd/publi_collision_recovery/2020-10-21_backpack_office/office.vtk"/> -->
+                <!-- <param name="mean_residual_file_name" value="/home/simon/Desktop/doctorat/publi_collision_recovery/backpack/2020-10-21-18-05-33_deskewed_prior_on_translation_calibrated_-001.csv"/> -->
+                <param name="initial_map_file_name" value="/hdd/publi_collision_recovery/2020-10-15_backpack_office/office.vtk"/>
+                <param name="initial_map_pose" value="[[-1,0,0,0],[0,-1,0,0],[0,0,1,0],[0,0,0,1]]"/>
+        </node>
+
+        <node pkg="rviz" type="rviz" name="rviz" args="-d $(find publi_collision_recovery)/cfg/max_gun.rviz"/>
+</launch>
+
