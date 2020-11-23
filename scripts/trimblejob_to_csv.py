@@ -5,8 +5,8 @@ import xml.etree.ElementTree as ET
 import math
 
 def spherical_to_cartesian(HA, VA, SD):
-    x = SD * math.cos(HA) * math.sin(VA)
-    y = SD * math.sin(HA) * math.sin(VA)
+    x = SD * math.cos(-HA) * math.sin(VA)
+    y = SD * math.sin(-HA) * math.sin(VA)
     z = SD * math.cos(VA)
     return (x, y, z)
 

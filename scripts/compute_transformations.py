@@ -21,21 +21,21 @@ def read_file(file_name):
             runs[run_nb,pose_nb,point_nb,2] = tokens[3]
     return runs
 
-def compute_transformation(first_point_start, second_point_start, third_point_start, first_point_end, second_point_end, third_point_end):
-    pa = second_point_start - first_point_start
-    qa = third_point_start - first_point_start
-    ra = np.cross(pa, qa)
-    ra /= np.linalg.norm(ra)
-    pb = second_point_end - first_point_end
-    qb = third_point_end - first_point_end
-    rb = np.cross(pb, qb)
-    rb /= np.linalg.norm(rb)
+def convert_points_to_coordinate_frame(first_point, second_point, third_point):
+    origin = first_point
+    x = second_point - origin
+    x /= np.linalg.norm(x)
+    y = np.cross(x, third_point - origin)
+    y /= np.linalg.norm(y)
+    z = np.cross(x, y)
+    return (origin, x, y, z)
 
+def compute_transformation(origin1, x1, y1, z1, origin2, x2, y2, z2):
     A = np.zeros((9,9))
-    A[0,0:3] = A[1,3:6] = A[2,6:9] = pa
-    A[3,0:3] = A[4,3:6] = A[5,6:9] = qa
-    A[6,0:3] = A[7,3:6] = A[8,6:9] = ra
-    b = np.hstack([pb, qb, rb])
+    A[0,0:3] = A[1,3:6] = A[2,6:9] = x1
+    A[3,0:3] = A[4,3:6] = A[5,6:9] = y1
+    A[6,0:3] = A[7,3:6] = A[8,6:9] = z1
+    b = np.hstack([x2, y2, z2])
     x = np.linalg.solve(A, b)
     
     R = np.ndarray((3,3))
@@ -49,7 +49,7 @@ def compute_transformation(first_point_start, second_point_start, third_point_st
     col1 = np.cross(col2, col0)
     R = np.vstack([col0, col1, col2]).T
 
-    t = first_point_end - first_point_start
+    t = np.vstack([x1, y1, z1]) @ (origin2 - origin1)
 
     T = np.eye(4)
     T[:3,:3] = R
@@ -63,6 +63,8 @@ if __name__ == "__main__":
     
     runs = read_file(sys.argv[1])
     for i in range(runs.shape[0]):
-        T = compute_transformation(runs[i,0,0,:], runs[i,0,1,:], runs[i,0,2,:], runs[i,1,0,:], runs[i,1,1,:], runs[i,1,2,:])
+        (origin1, x1, y1, z1) = convert_points_to_coordinate_frame(runs[i,0,0,:], runs[i,0,1,:], runs[i,0,2,:])
+        (origin2, x2, y2, z2) = convert_points_to_coordinate_frame(runs[i,1,0,:], runs[i,1,1,:], runs[i,1,2,:])
+        T = compute_transformation(origin1, x1, y1, z1, origin2, x2, y2, z2)
         print("Computed transformation for run " + str(i + START_INDEX_RUNS) + ":\n" + str(T) + "\n")
 

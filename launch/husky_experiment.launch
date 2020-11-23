@@ -1,0 +1,17 @@
+<launch>
+	<include file="$(find publi_collision_recovery)/launch/gun.launch">
+		<arg name="real_time" default="false"/>
+        	<arg name="mapping" default="true"/>
+        	<arg name="residual" default="false"/>
+        	<arg name="deskewed" default="true"/>
+
+        	<arg name="use_skew_weights" default="false"/>
+        	<arg name="skew_model" default="0"/>
+        	<arg name="corner_point_weight" default="1.0"/>
+        	<arg name="weight_quantile" default="0.0"/>
+        	<arg name="range_precision" default="0.02"/>
+        </include>
+
+	<node pkg="rosbag" type="play" name="play" output="screen" args="--clock -r 0.05 $(arg bagfile)"/>
+</launch>
+
