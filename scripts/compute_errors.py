@@ -36,6 +36,7 @@ def read_theodolite_file(filename):
                     col_index += 1
         return matrices
 
+# ZYX euler angle convention (roll pitch yaw)
 def rotation_matrix_to_euler_angles(R) :
     sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
     singular = sy < 1e-6
