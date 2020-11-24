@@ -37,18 +37,31 @@ def read_theodolite_file(filename):
         return matrices
 
 # ZYX euler angle convention (roll pitch yaw)
-def rotation_matrix_to_euler_angles(R) :
+def rotation_matrix_to_rpy(R) :
     sy = math.sqrt(R[0,0] * R[0,0] +  R[1,0] * R[1,0])
     singular = sy < 1e-6
     if not singular :
-        x = math.atan2(R[2,1] , R[2,2])
-        y = math.atan2(-R[2,0], sy)
-        z = math.atan2(R[1,0], R[0,0])
+        roll = math.atan2(R[2,1] , R[2,2])
+        pitch = math.atan2(-R[2,0], sy)
+        yaw = math.atan2(R[1,0], R[0,0])
     else :
-        x = math.atan2(-R[1,2], R[1,1])
-        y = math.atan2(-R[2,0], sy)
-        z = 0
-    return np.array([x, y, z])
+        roll = math.atan2(-R[1,2], R[1,1])
+        pitch = math.atan2(-R[2,0], sy)
+        yaw = 0
+    return (roll, pitch, yaw)
+
+def rotation_matrix_to_axis_angle(R):
+    angle = abs(math.acos((R.trace() - 1.0) / 2.0))
+    singular = angle < 1e-6 or abs(angle - math.pi) < 1e-6
+    if not singular:
+        axis = np.array([R[2,1]-R[1,2],R[0,2]-R[2,0],R[1,0]-R[0,1]]) / (2 * math.sin(angle))
+    else:
+        (eigen_values,eigen_vectors) = np.linalg.eig(R)
+        for i in range(len(eigen_values)):
+            if abs(eigen_values[i].real - 1) < 1e-6 and abs(eigen_values[i].imag) < 1e-6:
+                axis = eigen_vectors[i]
+                break
+    return (axis, angle)
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -58,8 +71,11 @@ if __name__ == "__main__":
     theodolite_matrices = read_theodolite_file(sys.argv[2])
     for i in range(mapper_matrices.shape[0]):
         translation_errors = theodolite_matrices[i,:3,3] - mapper_matrices[i,:3,3]
-        rotation_errors = np.degrees(rotation_matrix_to_euler_angles(theodolite_matrices[i]) - rotation_matrix_to_euler_angles(mapper_matrices[i]))
+        (roll_theodolite, pitch_theodolite, yaw_theodolite) = rotation_matrix_to_rpy(theodolite_matrices[i,:3,:3])
+        (roll_mapper, pitch_mapper, yaw_mapper) = rotation_matrix_to_rpy(mapper_matrices[i,:3,:3])
+        (roll_error, pitch_error, yaw_error) = (roll_theodolite - roll_mapper, pitch_theodolite - pitch_mapper, yaw_theodolite - yaw_mapper)
+        (_, angle_error) = rotation_matrix_to_axis_angle(theodolite_matrices[i,:3,:3].T @ mapper_matrices[i,:3,:3])
         print("Run " + str(i + 1) + ":")
-        print("Translation error:\tx: " + str(translation_errors[0])[:NUMBER_OF_DIGITS] + "m,\ty: " + str(translation_errors[1])[:NUMBER_OF_DIGITS] + "m,\tz: " + str(translation_errors[2])[:NUMBER_OF_DIGITS] + "m,\ttotal: " + str(np.linalg.norm(translation_errors))[:NUMBER_OF_DIGITS] + "m")
-        print("Rotation error:\t\tx: " + str(rotation_errors[0])[:NUMBER_OF_DIGITS] + "°,\ty: " + str(rotation_errors[1])[:NUMBER_OF_DIGITS] + "°,\tz: " + str(rotation_errors[2])[:NUMBER_OF_DIGITS] + "°,\ttotal: " + str(np.linalg.norm(rotation_errors))[:NUMBER_OF_DIGITS] + "°")
+        print("Translation error:\tx: " + str(translation_errors[0])[:NUMBER_OF_DIGITS] + "m,\t\ty: " + str(translation_errors[1])[:NUMBER_OF_DIGITS] + "m,\t\tz: " + str(translation_errors[2])[:NUMBER_OF_DIGITS] + "m,\t\ttotal: " + str(np.linalg.norm(translation_errors))[:NUMBER_OF_DIGITS] + "m")
+        print("Rotation error:\t\troll: " + str(math.degrees(roll_error))[:NUMBER_OF_DIGITS] + "°,\tpitch: " + str(math.degrees(pitch_error))[:NUMBER_OF_DIGITS] + "°,\tyaw: " + str(math.degrees(yaw_error))[:NUMBER_OF_DIGITS] + "°,\t\ttotal: " + str(math.degrees(angle_error))[:NUMBER_OF_DIGITS] + "°")
 
