@@ -2,9 +2,10 @@
         <arg name="real_time" default="false"/>
         <arg name="mapping" default="true"/>
         <arg name="residual" default="false"/>
-        <arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-11-18-14-41-15_deskewed.csv"/>
+        <arg name="residual_file_name" default=""/>
         <arg name="deskewed" default="true"/>
 
+	<arg name="final_transformation_file_name" default=""/>
         <arg name="use_skew_weights" default="false"/>
         <arg name="skew_model" default="0"/>
         <arg name="corner_point_weight" default="1.0"/>
@@ -72,6 +73,7 @@
                 <param name="map_tf_publish_rate" value="100" />
                 <param name="is_online" value="$(arg real_time)"/>
 
+                <param name="final_transformation_file_name" value="$(arg final_transformation_file_name)"/>
                 <param name="use_skew_weights" value="$(arg use_skew_weights)"/>
                 <param name="skew_model" value="$(arg skew_model)"/>
                 <param name="corner_point_weight" value="$(arg corner_point_weight)"/>
