@@ -1,9 +1,10 @@
 <launch>
-	<arg name="real_time" default="true"/>
-	<arg name="mapping" default="true"/>
-	<arg name="residual" default="false"/>
-	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-11-25_skewed.csv"/>
+	<arg name="real_time" default="false"/>
+	<arg name="mapping" default="false"/>
+	<arg name="residual" default="true"/>
+	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-12-01_deskewed.csv"/>
 	<arg name="deskewed" default="true"/>
+	<arg name="initial_map_pose" default="[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]"/>
 
 	<arg name="use_skew_weights" default="false"/>
 	<arg name="skew_model" default="0"/>
@@ -12,16 +13,15 @@
 	<arg name="range_precision" default="0.02"/>
 
 	<arg name="initial_map_file_name" default="" if="$(arg mapping)"/>
-	<arg name="initial_map_pose" default="" if="$(arg mapping)"/>
-	<arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-11-18_metrology/metrology_lab.vtk" unless="$(arg mapping)"/>
-	<arg name="initial_map_pose" default="[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]" unless="$(arg mapping)"/>
+	<arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-12-01_ladysusan/boreal.vtk" unless="$(arg mapping)"/>
+	<arg name="final_map_file_name" default="/hdd/publi_collision_recovery/2020-12-01_ladysusan/boreal.vtk" if="$(arg mapping)"/>
+	<arg name="final_map_file_name" default="map.vtk" unless="$(arg mapping)"/>
 	<arg name="cloud_topic" value="/rslidar_points_deskewed" if="$(arg deskewed)"/>
 	<arg name="cloud_topic" value="/rslidar_points" unless="$(arg deskewed)"/>
 
 	<param name="/use_sim_time" value="true"/>
 
-	<node pkg="tf" type="static_transform_publisher" name="imu_tf_pub" args="0.02255 0.06414 0.0121 -1.57079632679 0 0 base_link mti30 100" />
-	<node pkg="tf" type="static_transform_publisher" name="lidar_tf_pub" args="0 0.08745 0.0398 -1.57079632679 0 0 mti30 rslidar16 100" />
+	<node pkg="tf" type="static_transform_publisher" name="lidar_tf_pub" args="0.08745 0 -0.0398 1.57079632679 0 0 rslidar16 mti30 100" />
 
 	<node pkg="rslidar_pointcloud_stamped" type="cloud_node_stamped" name="cloud_node_stamped" output="screen">
 		<remap from="rslidar_packets" to="/rslidar16_packets"/>
@@ -40,16 +40,18 @@
                 <param name="fixed_frame_for_laser" value="odom"/>
         </node>
 
-	<node pkg="norlab_imu_tools" type="imu_attitude_to_tf_node" name="imu_attitude_to_tf_node" output="screen">
+	<node pkg="imu_odom" type="imu_odom_node" name="imu_odom_node" output="screen">
                 <remap from="imu_topic" to="/MTI30_imu/data"/>
                 <param name="odom_frame" value="odom"/>
-                <param name="base_frame" value="base_link"/>
-		<rosparam param="imu_alignment_rpy">[0, 0, -1.57079632679]</rosparam>
-        </node>	
+                <param name="robot_frame" value="rslidar16"/>
+                <param name="imu_frame" value="mti30"/>
+                <param name="real_time" value="$(arg real_time)"/>
+		<param name="rotation_only" value="true"/>
+        </node>
 
 	<node pkg="norlab_icp_mapper_ros" type="mapper_node" name="mapper_node" output="screen">
                 <param name="sensor_frame" value="rslidar16"/>
-                <param name="robot_frame" value="base_link"/>
+                <param name="robot_frame" value="rslidar16"/>
                 <param name="odom_frame" value="odom"/>
                 <param name="icp_config" value="$(find publi_collision_recovery)/params/susan_icp_config.yaml"/>
                 <param name="input_filters_config" value="$(find publi_collision_recovery)/params/susan_input_filters.yaml"/>
@@ -80,10 +82,10 @@
                 <remap from="points_in" to="$(arg cloud_topic)"/>
                 <param name="is_mapping" value="$(arg mapping)"/>
                 <param name="compute_residual" value="$(arg residual)"/>
-                <!-- <param name="final_map_file_name" value="/hdd/publi_collision_recovery/2020-11-25/metrology_lab.vtk"/> -->
 		<param name="mean_residual_file_name" value="$(arg residual_file_name)"/>
 		<param name="initial_map_file_name" value="$(arg initial_map_file_name)"/>
                 <param name="initial_map_pose" value="$(arg initial_map_pose)"/>
+		<param name="final_map_file_name" value="$(arg final_map_file_name)"/>
         </node>
 
         <node pkg="rviz" type="rviz" name="rviz" args="-d $(find publi_collision_recovery)/cfg/susan.rviz"/>

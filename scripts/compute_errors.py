@@ -64,18 +64,28 @@ def rotation_matrix_to_axis_angle(R):
     return (axis, angle)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        raise RuntimeError("Incorrect number of arguments! Argument 1 is the mapper matrix file. Argument 2 is the thedolite matrix file.")
+    if len(sys.argv) != 4:
+        raise RuntimeError("Incorrect number of arguments! Argument 1 is the mapper matrix file. Argument 2 is the thedolite matrix file. Argument 3 is the csv output file.")
 
     mapper_matrices = read_mapper_file(sys.argv[1])
     theodolite_matrices = read_theodolite_file(sys.argv[2])
-    for i in range(mapper_matrices.shape[0]):
-        translation_errors = theodolite_matrices[i,:3,3] - mapper_matrices[i,:3,3]
-        (roll_theodolite, pitch_theodolite, yaw_theodolite) = rotation_matrix_to_rpy(theodolite_matrices[i,:3,:3])
-        (roll_mapper, pitch_mapper, yaw_mapper) = rotation_matrix_to_rpy(mapper_matrices[i,:3,:3])
-        (roll_error, pitch_error, yaw_error) = (roll_theodolite - roll_mapper, pitch_theodolite - pitch_mapper, yaw_theodolite - yaw_mapper)
-        (_, angle_error) = rotation_matrix_to_axis_angle(theodolite_matrices[i,:3,:3].T @ mapper_matrices[i,:3,:3])
-        print("Run " + str(i + 1) + ":")
-        print("Translation error:\tx: " + str(translation_errors[0])[:NUMBER_OF_DIGITS] + "m,\t\ty: " + str(translation_errors[1])[:NUMBER_OF_DIGITS] + "m,\t\tz: " + str(translation_errors[2])[:NUMBER_OF_DIGITS] + "m,\t\ttotal: " + str(np.linalg.norm(translation_errors))[:NUMBER_OF_DIGITS] + "m")
-        print("Rotation error:\t\troll: " + str(math.degrees(roll_error))[:NUMBER_OF_DIGITS] + "°,\tpitch: " + str(math.degrees(pitch_error))[:NUMBER_OF_DIGITS] + "°,\tyaw: " + str(math.degrees(yaw_error))[:NUMBER_OF_DIGITS] + "°,\t\ttotal: " + str(math.degrees(angle_error))[:NUMBER_OF_DIGITS] + "°")
-
+    with open(sys.argv[3], "w") as output_file:
+        output_file.write("run_nb,x_travelled,x_error,y_travelled,y_error,z_travelled,z_error,translation,translation_error,roll_travelled,roll_error,pitch_travelled,pitch_error,yaw_travelled,yaw_error,rotation,rotation_error\n")
+        for i in range(mapper_matrices.shape[0]):
+            (x_travelled, y_travelled, z_travelled) = (abs(theodolite_matrices[i,0,3]), abs(theodolite_matrices[i,1,3]), abs(theodolite_matrices[i,2,3]))
+            translation_errors = theodolite_matrices[i,:3,3] - mapper_matrices[i,:3,3]
+            (x_error, y_error, z_error) = (abs(translation_errors[0]), abs(translation_errors[1]), abs(translation_errors[2]))
+            translation = np.linalg.norm(theodolite_matrices[i,:3,3])
+            translation_error = np.linalg.norm(translation_errors)
+            (roll_theodolite, pitch_theodolite, yaw_theodolite) = rotation_matrix_to_rpy(theodolite_matrices[i,:3,:3])
+            (roll_travelled, pitch_travelled, yaw_travelled) = (math.degrees(abs(roll_theodolite)), math.degrees(abs(pitch_theodolite)), math.degrees(abs(yaw_theodolite)))
+            (roll_mapper, pitch_mapper, yaw_mapper) = rotation_matrix_to_rpy(mapper_matrices[i,:3,:3])
+            (roll_error, pitch_error, yaw_error) = (math.degrees(abs(roll_theodolite - roll_mapper)), math.degrees(abs(pitch_theodolite - pitch_mapper)), math.degrees(abs(yaw_theodolite - yaw_mapper)))
+            (_, rotation) = rotation_matrix_to_axis_angle(theodolite_matrices[i,:3,:3])
+            rotation = math.degrees(abs(rotation))
+            (_, rotation_error) = rotation_matrix_to_axis_angle(theodolite_matrices[i,:3,:3].T @ mapper_matrices[i,:3,:3])
+            rotation_error = math.degrees(abs(rotation_error))
+            print("Run " + str(i + 1) + ":")
+            print("Translation error:\tx: " + str(x_error)[:NUMBER_OF_DIGITS] + "m,\t\ty: " + str(y_error)[:NUMBER_OF_DIGITS] + "m,\t\tz: " + str(z_error)[:NUMBER_OF_DIGITS] + "m,\t\ttotal: " + str(translation_error)[:NUMBER_OF_DIGITS] + "m")
+            print("Rotation error:\t\troll: " + str(roll_error)[:NUMBER_OF_DIGITS] + "°,\tpitch: " + str(pitch_error)[:NUMBER_OF_DIGITS] + "°,\tyaw: " + str(yaw_error)[:NUMBER_OF_DIGITS] + "°,\t\ttotal: " + str(rotation_error)[:NUMBER_OF_DIGITS] + "°")
+            output_file.write(str(i + 1) + "," + str(x_travelled) + "," + str(x_error) + "," + str(y_travelled) + "," + str(y_error) + "," + str(z_travelled) + "," + str(z_error) + "," + str(translation) + "," + str(translation_error) + "," + str(roll_travelled) + "," + str(roll_error) + "," + str(pitch_travelled) + "," + str(pitch_error) + "," + str(yaw_travelled) + "," + str(yaw_error) + "," + str(rotation) + "," + str(rotation_error) + "\n")

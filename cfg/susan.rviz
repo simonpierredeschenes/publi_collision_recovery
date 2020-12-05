@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /TF1/Frames1
         - /TF1/Tree1
       Splitter Ratio: 0.6882352828979492
     Tree Height: 589
@@ -45,7 +46,7 @@ Visualization Manager:
       Color: 32; 74; 135
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 5162
@@ -62,7 +63,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -98,18 +99,14 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        accelero:
-          Value: false
-        base_link:
-          Value: false
         map:
-          Value: false
+          Value: true
         mti30:
           Value: false
         odom:
-          Value: false
-        rslidar16:
           Value: true
+        rslidar16:
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: false
@@ -118,19 +115,16 @@ Visualization Manager:
       Tree:
         map:
           odom:
-            accelero:
-              {}
-            base_link:
+            rslidar16:
               mti30:
-                rslidar16:
-                  {}
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -154,16 +148,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 14.464349746704102
+      Distance: 12.319838523864746
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.33380618691444397
-        Y: 0.195516437292099
-        Z: -1.3389136791229248
+        X: 0.4199191629886627
+        Y: 0.32310810685157776
+        Z: -0.38403230905532837
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -172,7 +166,7 @@ Visualization Manager:
       Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.22888290882110596
+      Yaw: 3.832062244415283
     Saved: ~
 Window Geometry:
   Displays:

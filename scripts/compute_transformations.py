@@ -13,9 +13,12 @@ def read_file(file_name):
         runs = np.ndarray((int(len(lines) / (NB_POINTS_PER_POSE * NB_POSES_PER_RUN)), NB_POSES_PER_RUN, NB_POINTS_PER_POSE, 3))
         for line in lines:
             tokens = line.split(",")
-            run_nb = int(tokens[0][0]) - START_INDEX_RUNS
-            pose_nb = 0 if tokens[0][1] <= "c" else 1
-            point_nb = ord(tokens[0][1]) - (97 + (pose_nb * 3))
+            nb_digit = 0
+            while ord(tokens[0][nb_digit]) >= 48 and ord(tokens[0][nb_digit]) <= 58:
+                nb_digit += 1
+            run_nb = int(tokens[0][:nb_digit]) - START_INDEX_RUNS
+            pose_nb = 0 if tokens[0][nb_digit] <= "c" else 1
+            point_nb = ord(tokens[0][nb_digit]) - (97 + (pose_nb * 3))
             runs[run_nb,pose_nb,point_nb,0] = tokens[1]
             runs[run_nb,pose_nb,point_nb,1] = tokens[2]
             runs[run_nb,pose_nb,point_nb,2] = tokens[3]

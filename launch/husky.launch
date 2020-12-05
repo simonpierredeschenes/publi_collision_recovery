@@ -7,11 +7,11 @@
         <arg name="initial_map_pose" default="[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]"/>
         <arg name="final_map_file_name" default="map.vtk"/>
         <arg name="final_map_pose_file_name" default="final_map_pose.txt"/>
+        <arg name="final_transformation_file_name" default="final_transformation.txt"/>
 
-	<arg name="final_transformation_file_name" default=""/>
-        <arg name="use_skew_weights" default="false"/>
+        <arg name="use_skew_weights" default="true"/>
         <arg name="skew_model" default="0"/>
-        <arg name="corner_point_weight" default="1.0"/>
+        <arg name="corner_point_weight" default="0.0"/>
         <arg name="weight_quantile" default="0.0"/>
         <arg name="range_precision" default="0.02"/>
 
@@ -22,7 +22,7 @@
 
         <param name="/use_sim_time" value="true"/>
 
-        <node pkg="tf" type="static_transform_publisher" name="imu_tf_pub" args="0.02255 0.05158 0.1438 -1.57079632679 0.261799 0 base_link mti30 100" />
+        <node pkg="tf" type="static_transform_publisher" name="imu_tf_pub" args="0.02255 0.054 0.0435 -1.57079632679 0 0 base_link mti30 100" />
         <node pkg="tf" type="static_transform_publisher" name="lidar_tf_pub" args="0 0.08745 0.0398 -1.57079632679 0 0 mti30 rslidar16 100" />
 
         <node pkg="rslidar_pointcloud_stamped" type="cloud_node_stamped" name="cloud_node_stamped" output="screen">

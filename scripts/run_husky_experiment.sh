@@ -10,11 +10,11 @@ matrix_file=$1
 bagfile_folder=$2
 
 > $matrix_file
-run_prefix="$bagfile_folder"/run
 map_prefix="$bagfile_folder"/map
-for run_bag in "$run_prefix"*.bag
+for run_bag in `ls -v "$bagfile_folder"/run*.bag`
 do
-  run_nb=${run_bag:`expr length "$run_prefix"`:1}
+  run_bag_file_name=${run_bag:`expr length "$bagfile_folder"/`}
+  run_nb=`echo $run_bag_file_name | grep -o "[0-9]*"`
   map_bag="$map_prefix""$run_nb".bag
   map_file="$map_prefix""$run_nb".vtk
   map_pose_file="$map_prefix""$run_nb"_pose.txt

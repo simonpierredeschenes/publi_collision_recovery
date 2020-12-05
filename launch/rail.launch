@@ -1,9 +1,9 @@
 <launch>
 	<arg name="real_time" default="false"/>
 	<arg name="mapping" default="false"/>
-	<arg name="residual" default="true"/>
-	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-11-25_skewed.csv"/>
-	<arg name="deskewed" default="false"/>
+	<arg name="residual" default="false"/>
+	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/dsfdfsf.csv"/>
+	<arg name="deskewed" default="true"/>
 
 	<arg name="use_skew_weights" default="false"/>
 	<arg name="skew_model" default="0"/>
