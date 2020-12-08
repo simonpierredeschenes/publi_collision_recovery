@@ -1,8 +1,9 @@
 <launch>
 	<arg name="real_time" default="false"/>
-	<arg name="mapping" default="false"/>
+	<arg name="mapping" default="true"/>
 	<arg name="residual" default="false"/>
-	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/dsfdfsf.csv"/>
+	<arg name="perpendicular_residual" default="true"/>
+	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-11-25_deskewed_better_residual.csv"/>
 	<arg name="deskewed" default="true"/>
 
 	<arg name="use_skew_weights" default="false"/>
@@ -13,8 +14,10 @@
 
 	<arg name="initial_map_file_name" default="" if="$(arg mapping)"/>
 	<arg name="initial_map_pose" default="" if="$(arg mapping)"/>
-	<arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-11-25/metrology_lab.vtk" unless="$(arg mapping)"/>
+	<arg name="final_map_file_name" default="/hdd/publi_collision_recovery/2020-11-25/metrology_lab_dense.vtk" if="$(arg mapping)"/>
+	<arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-11-25/metrology_lab_dense.vtk" unless="$(arg mapping)"/>
 	<arg name="initial_map_pose" default="[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]" unless="$(arg mapping)"/>
+	<arg name="final_map_file_name" default="map.vtk" unless="$(arg mapping)"/>
 	<arg name="cloud_topic" value="/rslidar_points_deskewed" if="$(arg deskewed)"/>
 	<arg name="cloud_topic" value="/rslidar_points" unless="$(arg deskewed)"/>
 
@@ -58,7 +61,7 @@
                 <param name="map_update_condition" value="overlap"/>
                 <param name="map_update_overlap" value="0.9"/>
                 <param name="sensor_max_range" value="100.0"/>
-                <param name="min_dist_new_point" value="0.05"/>
+                <param name="min_dist_new_point" value="0.01"/>
                 <param name="compute_prob_dynamic" value="true"/>
                 <param name="prior_dynamic" value="0.2" />
                 <param name="threshold_dynamic" value="0.5" />
@@ -81,7 +84,8 @@
                 <remap from="points_in" to="$(arg cloud_topic)"/>
                 <param name="is_mapping" value="$(arg mapping)"/>
                 <param name="compute_residual" value="$(arg residual)"/>
-                <!-- <param name="final_map_file_name" value="/hdd/publi_collision_recovery/2020-11-25/metrology_lab.vtk"/> -->
+                <param name="perpendicular_residual" value="$(arg perpendicular_residual)"/>
+                <param name="final_map_file_name" value="$(arg final_map_file_name)"/>
 		<param name="mean_residual_file_name" value="$(arg residual_file_name)"/>
 		<param name="initial_map_file_name" value="$(arg initial_map_file_name)"/>
                 <param name="initial_map_pose" value="$(arg initial_map_pose)"/>

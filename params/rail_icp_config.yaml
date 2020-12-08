@@ -7,8 +7,6 @@ matcher:
 outlierFilters:
  - TrimmedDistOutlierFilter:
     ratio: 0.8
- - SurfaceNormalOutlierFilter:
-     maxAngle: 0.42
 
 errorMinimizer:
   PointToPlaneErrorMinimizer:
@@ -20,10 +18,10 @@ transformationCheckers:
       minDiffTransErr: 0.01
       smoothLength: 2
   - CounterTransformationChecker:
-      maxIterationCount: 20
+      maxIterationCount: 40
   - BoundTransformationChecker:
-      maxRotationNorm: 2
-      maxTranslationNorm: 20
+      maxRotationNorm: 1.1
+      maxTranslationNorm: 15.0
 
 inspector:
   NullInspector
