@@ -3,8 +3,8 @@
 	<arg name="mapping" default="true"/>
 	<arg name="residual" default="false"/>
 	<arg name="perpendicular_residual" default="true"/>
-	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-11-25_deskewed_better_residual.csv"/>
-	<arg name="deskewed" default="true"/>
+	<arg name="residual_file_name" default="/home/norlab/results/2020-11-25_deskewed.csv"/>
+	<arg name="deskewed" default="false"/>
 
 	<arg name="use_skew_weights" default="false"/>
 	<arg name="skew_model" default="0"/>
@@ -14,8 +14,8 @@
 
 	<arg name="initial_map_file_name" default="" if="$(arg mapping)"/>
 	<arg name="initial_map_pose" default="" if="$(arg mapping)"/>
-	<arg name="final_map_file_name" default="/hdd/publi_collision_recovery/2020-11-25/metrology_lab_dense.vtk" if="$(arg mapping)"/>
-	<arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-11-25/metrology_lab_dense.vtk" unless="$(arg mapping)"/>
+	<arg name="final_map_file_name" default="/home/norlab/data/2020-11-25/metrology_lab_dense.vtk" if="$(arg mapping)"/>
+	<arg name="initial_map_file_name" default="/home/norlab/data/2020-11-25/metrology_lab_dense.vtk" unless="$(arg mapping)"/>
 	<arg name="initial_map_pose" default="[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]" unless="$(arg mapping)"/>
 	<arg name="final_map_file_name" default="map.vtk" unless="$(arg mapping)"/>
 	<arg name="cloud_topic" value="/rslidar_points_deskewed" if="$(arg deskewed)"/>
