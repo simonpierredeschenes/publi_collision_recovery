@@ -1,25 +1,35 @@
 #! /bin/bash
 
-if [ $# -ne 2 ]
+if [ $# -ne 3 ]
 then
-      echo "Incorrect number of arguments! Argument 1 is the transformation matrix output file. Argument 2 is the folder containing the bag files."
-      exit
+  echo "Incorrect number of arguments! Argument 1 is the folder containing the bag files. Argument 2 is the folder in which to store the results. Argument 3 is the model number to use (-1 for no model)."
+  exit
 fi
 
-matrix_file=$1
-bagfile_folder=$2
+data_folder=$1
+results_folder=$2
+model_nb=$3
 
-> $matrix_file
-map_prefix="$bagfile_folder"/map
-for run_bag in `ls -v "$bagfile_folder"/run*.bag`
+matrix_file="$results_folder"/mapper.txt
+
+use_skew_weights="true"
+if [ $model_nb -eq -1 ]
+then
+  use_skew_weights="false"
+fi
+
+#> $matrix_file
+for run_bag in `ls -v "$data_folder"/run*.bag`
 do
-  run_bag_file_name=${run_bag:`expr length "$bagfile_folder"/`}
+  run_bag_file_name=${run_bag##*/}
   run_nb=`echo $run_bag_file_name | grep -o "[0-9]*"`
-  map_bag="$map_prefix""$run_nb".bag
-  map_file="$map_prefix""$run_nb".vtk
-  map_pose_file="$map_prefix""$run_nb"_pose.txt
+  map_bag="$data_folder"/map"$run_nb".bag
+  map_file="$results_folder"/map"$run_nb".vtk
+  map_pose_file="$results_folder"/map"$run_nb"_pose.txt
+  map_inertia_file="$results_folder"/inertia_map"$run_nb".csv
+  run_inertia_file="$results_folder"/inertia_run"$run_nb".csv
 
-  roslaunch publi_collision_recovery husky.launch bagfile:=$map_bag final_map_file_name:=$map_file final_map_pose_file_name:=$map_pose_file &
+  roslaunch publi_collision_recovery husky.launch bagfile:=$map_bag final_map_file_name:=$map_file final_map_pose_file_name:=$map_pose_file use_skew_weights:=$use_skew_weights skew_model:=$model_nb inertia_file_name:=$map_inertia_file &
   sleep 3
   while [[ ! -z `pgrep mapper_node` ]]
   do
@@ -34,7 +44,7 @@ do
 
   map_pose=`rosrun publi_collision_recovery read_matrix_file.py "$map_pose_file"`
 
-  roslaunch publi_collision_recovery husky.launch bagfile:=$run_bag initial_map_file_name:=$map_file initial_map_pose:=$map_pose final_transformation_file_name:=$matrix_file &
+  roslaunch publi_collision_recovery husky.launch bagfile:=$run_bag initial_map_file_name:=$map_file initial_map_pose:=$map_pose final_transformation_file_name:=$matrix_file use_skew_weights:=$use_skew_weights skew_model:=$model_nb inertia_file_name:=$run_inertia_file &
   sleep 3
   while [[ ! -z `pgrep mapper_node` ]]
   do

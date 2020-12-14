@@ -10,7 +10,7 @@
 - SurfaceCurvatureDataPointsFilter:
 
 - SimpleSensorNoiseDataPointsFilter:
-    sensorType: 5
+    sensorType: 6
 
 - VoxelGridDataPointsFilter:
     vSizeX: 0.05

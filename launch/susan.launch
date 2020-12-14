@@ -32,6 +32,9 @@
 		<param name="min_distance" value="0.2"/>
 		<param name="resolution_type" value="0.5cm"/>
 		<param name="intensity_mode" value="1"/>
+		<param name="curves_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/curves.csv" />
+		<param name="angle_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/angle.csv" />
+		<param name="channel_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/ChannelNum.csv" />
 	</node>
 
         <node pkg="pointcloud_motion_deskew" type="pointcloud2_deskew_node" name="pointcloud2_deskew_node" output="screen">
