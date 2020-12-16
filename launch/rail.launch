@@ -3,14 +3,11 @@
 	<arg name="mapping" default="false"/>
 	<arg name="residual" default="true"/>
 	<arg name="perpendicular_residual" default="true"/>
+	<arg name="point_to_plane_residual" default="true"/>
 	<arg name="residual_file_name" default="/home/norlab/results/2020-11-25_deskewed.csv"/>
 	<arg name="deskewed" default="true"/>
-
 	<arg name="use_skew_weights" default="false"/>
-	<arg name="skew_model" default="0"/>
-	<arg name="corner_point_weight" default="1.0"/>
-	<arg name="weight_quantile" default="0.0"/>
-	<arg name="range_precision" default="0.02"/>
+	<arg name="record_inertia" default="false"/>
 
 	<arg name="initial_map_file_name" default="" if="$(arg mapping)"/>
 	<arg name="initial_map_pose" default="" if="$(arg mapping)"/>
@@ -67,12 +64,9 @@
                 <param name="compute_prob_dynamic" value="true" />
                 <param name="map_tf_publish_rate" value="100" />
                 <param name="is_online" value="$(arg real_time)"/>
-
+		<param name="point_to_plane_residual" value="$(arg point_to_plane_residual)"/>
 		<param name="use_skew_weights" value="$(arg use_skew_weights)"/>
-		<param name="skew_model" value="$(arg skew_model)"/>
-		<param name="corner_point_weight" value="$(arg corner_point_weight)"/>
-		<param name="weight_quantile" value="$(arg weight_quantile)"/>
-		<param name="range_precision" value="$(arg range_precision)"/>
+		<param name="record_inertia" value="$(arg record_inertia)"/>
 
                 <remap from="points_in" to="$(arg cloud_topic)"/>
                 <param name="is_mapping" value="$(arg mapping)"/>

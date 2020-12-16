@@ -1,20 +1,18 @@
 <launch>
 	<arg name="real_time" default="false"/>
-	<arg name="mapping" default="false"/>
-	<arg name="residual" default="true"/>
-	<arg name="residual_file_name" default="/home/simon/Desktop/doctorat/publi_collision_recovery/gun/2020-12-01_deskewed.csv"/>
-	<arg name="deskewed" default="true"/>
+	<arg name="mapping" default="true"/>
+	<arg name="residual" default="false"/>
+	<arg name="residual_file_name" default="/home/norlab/results/2020-12-01_pointtopoint_dense/deskewed.csv"/>
+	<arg name="deskewed" default="false"/>
 	<arg name="initial_map_pose" default="[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]"/>
-
+	<arg name="perpendicular_residual" default="false"/>
+	<arg name="point_to_plane_residual" default="false"/>
 	<arg name="use_skew_weights" default="false"/>
-	<arg name="skew_model" default="0"/>
-	<arg name="corner_point_weight" default="1.0"/>
-	<arg name="weight_quantile" default="0.0"/>
-	<arg name="range_precision" default="0.02"/>
+	<arg name="record_inertia" default="false"/>
 
 	<arg name="initial_map_file_name" default="" if="$(arg mapping)"/>
-	<arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-12-01_ladysusan/boreal.vtk" unless="$(arg mapping)"/>
-	<arg name="final_map_file_name" default="/hdd/publi_collision_recovery/2020-12-01_ladysusan/boreal.vtk" if="$(arg mapping)"/>
+	<arg name="initial_map_file_name" default="/home/norlab/results/2020-12-01_pointtopoint_dense/map.vtk" unless="$(arg mapping)"/>
+	<arg name="final_map_file_name" default="/home/norlab/results/2020-12-01_pointtopoint_dense/map.vtk" if="$(arg mapping)"/>
 	<arg name="final_map_file_name" default="map.vtk" unless="$(arg mapping)"/>
 	<arg name="cloud_topic" value="/rslidar_points_deskewed" if="$(arg deskewed)"/>
 	<arg name="cloud_topic" value="/rslidar_points" unless="$(arg deskewed)"/>
@@ -23,19 +21,9 @@
 
 	<node pkg="tf" type="static_transform_publisher" name="lidar_tf_pub" args="0.08745 0 -0.0398 1.57079632679 0 0 rslidar16 mti30 100" />
 
-	<node pkg="rslidar_pointcloud_stamped" type="cloud_node_stamped" name="cloud_node_stamped" output="screen">
-		<remap from="rslidar_packets" to="/rslidar16_packets"/>
-		<remap from="rslidar_packets_difop" to="/rslidar16_packets_difop"/>
-		<param name="output_points_topic" value="rslidar_points" />
-		<param name="model" value="RS16"/>
-		<param name="max_distance" value="200"/>
-		<param name="min_distance" value="0.2"/>
-		<param name="resolution_type" value="0.5cm"/>
-		<param name="intensity_mode" value="1"/>
-		<param name="curves_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/curves.csv" />
-		<param name="angle_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/angle.csv" />
-		<param name="channel_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/ChannelNum.csv" />
-	</node>
+	<include file="$(find publi_collision_recovery)/launch/lidar.launch">
+		<arg name="real_time" value="$(arg real_time)"/>
+	</include>
 
         <node pkg="pointcloud_motion_deskew" type="pointcloud2_deskew_node" name="pointcloud2_deskew_node" output="screen">
                 <remap from="input_point_cloud" to="/rslidar_points"/>
@@ -62,7 +50,7 @@
                 <param name="map_update_condition" value="overlap"/>
                 <param name="map_update_overlap" value="0.9"/>
                 <param name="sensor_max_range" value="100.0"/>
-                <param name="min_dist_new_point" value="0.05"/>
+                <param name="min_dist_new_point" value="0.01"/>
                 <param name="compute_prob_dynamic" value="true"/>
                 <param name="prior_dynamic" value="0.2" />
                 <param name="threshold_dynamic" value="0.5" />
@@ -75,12 +63,10 @@
                 <param name="compute_prob_dynamic" value="true" />
                 <param name="map_tf_publish_rate" value="100" />
                 <param name="is_online" value="$(arg real_time)"/>
-
+		<param name="perpendicular_residual" value="$(arg perpendicular_residual)"/>
+		<param name="point_to_plane_residual" value="$(arg point_to_plane_residual)"/>
 		<param name="use_skew_weights" value="$(arg use_skew_weights)"/>
-		<param name="skew_model" value="$(arg skew_model)"/>
-		<param name="corner_point_weight" value="$(arg corner_point_weight)"/>
-		<param name="weight_quantile" value="$(arg weight_quantile)"/>
-		<param name="range_precision" value="$(arg range_precision)"/>
+		<param name="record_inertia" value="$(arg record_inertia)"/>
 
                 <remap from="points_in" to="$(arg cloud_topic)"/>
                 <param name="is_mapping" value="$(arg mapping)"/>

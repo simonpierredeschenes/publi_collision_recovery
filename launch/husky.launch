@@ -8,7 +8,7 @@
         <arg name="final_map_file_name" default="map.vtk"/>
         <arg name="final_map_pose_file_name" default="final_map_pose.txt"/>
         <arg name="final_transformation_file_name" default="final_transformation.txt"/>
-        <arg name="record_inertia" default="true"/>
+        <arg name="record_inertia" default="false"/>
         <arg name="inertia_file_name" default="inertia.csv"/>
 
         <arg name="use_skew_weights" default="false"/>
