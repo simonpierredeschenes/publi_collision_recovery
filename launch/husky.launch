@@ -99,6 +99,7 @@
                 <param name="mean_residual_file_name" value="$(arg residual_file_name)"/>
                 <param name="initial_map_file_name" value="$(arg initial_map_file_name)"/>
                 <param name="initial_map_pose" value="$(arg initial_map_pose)"/>
+                <param name="after_deskewing" value="$(arg deskewed)"/>
                 <param name="record_inertia" value="$(arg record_inertia)"/>
                 <param name="inertia_file_name" value="$(arg inertia_file_name)"/>
         </node>

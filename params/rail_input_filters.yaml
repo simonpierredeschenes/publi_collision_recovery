@@ -22,7 +22,7 @@
     sensorType: 5
 
 - VoxelGridDataPointsFilter:
-    vSizeX: 0.03
-    vSizeY: 0.03
-    vSizeZ: 0.03
+    vSizeX: 0.05
+    vSizeY: 0.05
+    vSizeZ: 0.05
 
