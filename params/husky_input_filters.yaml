@@ -1,5 +1,5 @@
 - SurfaceNormalDataPointsFilter:
-      knn: 20
+      knn: 15
       epsilon: 1
       keepNormals: 1
       keepDensities: 1
