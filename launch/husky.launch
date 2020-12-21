@@ -22,8 +22,10 @@
         <arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-11-18_metrology/metrology_lab.vtk" unless="$(arg mapping)"/>
         <arg name="cloud_topic" value="/rslidar_points_deskewed" if="$(arg deskewed)"/>
         <arg name="cloud_topic" value="/rslidar_points" unless="$(arg deskewed)"/>
-        <arg name="post_filters_file" value="$(find publi_collision_recovery)/params/husky_post_filters.yaml" if="$(arg use_skew_weights)"/>
-        <arg name="post_filters_file" value="$(find publi_collision_recovery)/params/husky_no_model_post_filters.yaml" unless="$(arg use_skew_weights)"/>
+        <arg name="input_filters_config" value="$(find publi_collision_recovery)/params/husky_al-nuaimi_input_filters.yaml" if="$(eval min(max(arg('skew_model')-2, 0), 1))"/>
+        <arg name="input_filters_config" value="$(find publi_collision_recovery)/params/husky_input_filters.yaml" unless="$(eval min(max(arg('skew_model')-2, 0), 1))"/>
+        <arg name="post_filters_config" value="$(find publi_collision_recovery)/params/husky_post_filters.yaml" if="$(arg use_skew_weights)"/>
+        <arg name="post_filters_config" value="$(find publi_collision_recovery)/params/husky_no_model_post_filters.yaml" unless="$(arg use_skew_weights)"/>
 
         <param name="/use_sim_time" value="true"/>
 
@@ -66,8 +68,8 @@
                 <param name="robot_frame" value="base_link"/>
                 <param name="odom_frame" value="odom"/>
                 <param name="icp_config" value="$(find publi_collision_recovery)/params/husky_icp_config.yaml"/>
-                <param name="input_filters_config" value="$(find publi_collision_recovery)/params/husky_input_filters.yaml"/>
-                <param name="map_post_filters_config" value="$(arg post_filters_file)"/>
+                <param name="input_filters_config" value="$(arg input_filters_config)"/>
+                <param name="map_post_filters_config" value="$(arg post_filters_config)"/>
                 <param name="map_update_condition" value="delay"/>
                 <param name="map_update_delay" value="0"/>
                 <param name="sensor_max_range" value="100.0"/>
