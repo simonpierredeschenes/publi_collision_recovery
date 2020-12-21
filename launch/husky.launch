@@ -14,9 +14,10 @@
         <arg name="use_skew_weights" default="false"/>
         <arg name="skew_model" default="0"/>
         <arg name="corner_point_uncertainty" default="0.0"/>
+        <arg name="uncertainty_threshold" default="1000.0"/>
         <arg name="uncertainty_quantile" default="1.0"/>
         <arg name="soft_uncertainty_threshold" default="true"/>
-        <arg name="uncertainty_threshold" default="0.5"/>
+        <arg name="binary_uncertainty_threshold" default="0.5"/>
 
         <arg name="initial_map_file_name" default="" if="$(arg mapping)"/>
         <arg name="initial_map_file_name" default="/hdd/publi_collision_recovery/2020-11-18_metrology/metrology_lab.vtk" unless="$(arg mapping)"/>
@@ -91,9 +92,10 @@
                 <param name="use_skew_weights" value="$(arg use_skew_weights)"/>
                 <param name="skew_model" value="$(arg skew_model)"/>
                 <param name="corner_point_uncertainty" value="$(arg corner_point_uncertainty)"/>
+                <param name="uncertainty_threshold" value="$(arg uncertainty_threshold)"/>
                 <param name="uncertainty_quantile" value="$(arg uncertainty_quantile)"/>
                 <param name="soft_uncertainty_threshold" value="$(arg soft_uncertainty_threshold)"/>
-                <param name="uncertainty_threshold" value="$(arg uncertainty_threshold)"/>
+                <param name="binary_uncertainty_threshold" value="$(arg binary_uncertainty_threshold)"/>
 
                 <remap from="points_in" to="$(arg cloud_topic)"/>
                 <param name="is_mapping" value="$(arg mapping)"/>
