@@ -18,7 +18,7 @@ then
   use_skew_weights="false"
 fi
 
-#> $matrix_file
+> $matrix_file
 for run_bag in `ls -v "$data_folder"/run*.bag`
 do
   run_bag_file_name=${run_bag##*/}
