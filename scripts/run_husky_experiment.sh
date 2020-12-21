@@ -10,7 +10,12 @@ data_folder=$1
 results_folder=$2
 model_nb=$3
 
+if [ ! -d $results_folder ]
+then
+        mkdir -p $results_folder
+fi
 matrix_file="$results_folder"/mapper.txt
+> $matrix_file
 
 use_skew_weights="true"
 if [ $model_nb -eq -1 ]
@@ -18,7 +23,6 @@ then
   use_skew_weights="false"
 fi
 
-> $matrix_file
 for run_bag in `ls -v "$data_folder"/run*.bag`
 do
   run_bag_file_name=${run_bag##*/}
