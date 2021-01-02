@@ -1,0 +1,13 @@
+- SurfaceNormalDataPointsFilter:
+      knn: 20
+      epsilon: 1
+      keepNormals: 1
+      keepDensities: 1
+      keepEigenValues: 1
+      keepEigenVectors: 1
+      sortEigen: 1
+
+- CutAtDescriptorThresholdDataPointsFilter:
+      descName: skewUncertainty
+      useLargerThan: 1
+      threshold: 1000000.0
