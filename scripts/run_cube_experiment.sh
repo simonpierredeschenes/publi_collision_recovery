@@ -33,22 +33,22 @@ do
   map_inertia_file="$results_folder"/inertia_map"$run_nb".csv
   run_inertia_file="$results_folder"/inertia_run"$run_nb".csv
 
-  roslaunch publi_collision_recovery cube.launch bagfile:=$map_bag final_map_file_name:=$map_file final_map_pose_file_name:=$map_pose_file use_skew_weights:=$use_skew_weights skew_model:=$model_nb inertia_file_name:=$map_inertia_file &
-  sleep 3
-  while [[ ! -z `pgrep mapper_node` ]]
-  do
-      sleep 1
-  done
-  killall rviz
-  killall imu_odom_node
-  killall pointcloud2_deskew_node
-  killall cloud_node_stamped
-  killall static_transform_publisher
-  killall rosmaster
+#  roslaunch publi_collision_recovery cube.launch bagfile:=$map_bag final_map_file_name:=$map_file final_map_pose_file_name:=$map_pose_file use_skew_weights:=$use_skew_weights skew_model:=$model_nb inertia_file_name:=$map_inertia_file &
+#  sleep 3
+#  while [[ ! -z `pgrep mapper_node` ]]
+#  do
+#      sleep 1
+#  done
+#  killall rviz
+#  killall imu_odom_node
+#  killall pointcloud2_deskew_node
+#  killall cloud_node_stamped
+#  killall static_transform_publisher
+#  killall rosmaster
 
-  map_pose=`rosrun publi_collision_recovery read_matrix_file.py "$map_pose_file"`
+#  map_pose=`rosrun publi_collision_recovery read_matrix_file.py "$map_pose_file"`
 
-  roslaunch publi_collision_recovery cube.launch bagfile:=$run_bag initial_map_file_name:=$map_file initial_map_pose:=$map_pose final_transformation_file_name:=$matrix_file use_skew_weights:=$use_skew_weights skew_model:=$model_nb inertia_file_name:=$run_inertia_file &
+  roslaunch publi_collision_recovery cube.launch bagfile:=$run_bag final_transformation_file_name:=$matrix_file use_skew_weights:=$use_skew_weights skew_model:=$model_nb &
   sleep 3
   while [[ ! -z `pgrep mapper_node` ]]
   do

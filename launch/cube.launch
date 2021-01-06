@@ -33,9 +33,22 @@
         <node pkg="tf" type="static_transform_publisher" name="imu_tf_pub" args="0.02255 0.054 0.0435 -1.57079632679 0 0 base_link mti30 100" />
         <node pkg="tf" type="static_transform_publisher" name="lidar_tf_pub" args="0 0.08745 0.0398 -1.57079632679 0 0 mti30 rslidar16 100" />
 
-	<include file="$(find publi_collision_recovery)/launch/lidar.launch">
+	<!-- <include file="$(find publi_collision_recovery)/launch/lidar.launch">
                 <arg name="real_time" value="$(arg real_time)"/>
-        </include>
+        </include> -->
+	<node pkg="rslidar_pointcloud_stamped" type="cloud_node_stamped" name="cloud_node_stamped" output="screen">
+                <remap from="rslidar_packets" to="/rslidar16_packets"/>
+                <remap from="rslidar_packets_difop" to="/rslidar16_packets_difop"/>
+                <param name="output_points_topic" value="rslidar_points" />
+                <param name="model" value="RS16"/>
+                <param name="max_distance" value="200"/>
+                <param name="min_distance" value="0.2"/>
+                <param name="resolution_type" value="0.5cm"/>
+                <param name="intensity_mode" value="1"/>
+                <param name="curves_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/curves.csv" />
+                <param name="angle_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/angle.csv" />
+                <param name="channel_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/ChannelNum.csv" />
+        </node>
 
         <node pkg="pointcloud_motion_deskew" type="pointcloud2_deskew_node" name="pointcloud2_deskew_node" output="screen">
                 <remap from="input_point_cloud" to="/rslidar_points"/>
@@ -61,7 +74,7 @@
                 <param name="map_update_condition" value="delay"/>
                 <param name="map_update_delay" value="0"/>
                 <param name="sensor_max_range" value="100.0"/>
-                <param name="min_dist_new_point" value="0.05"/>
+                <param name="min_dist_new_point" value="0.03"/>
                 <param name="compute_prob_dynamic" value="true"/>
                 <param name="prior_dynamic" value="0.2" />
                 <param name="threshold_dynamic" value="0.5" />

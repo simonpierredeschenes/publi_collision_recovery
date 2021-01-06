@@ -10,4 +10,4 @@
 - CutAtDescriptorThresholdDataPointsFilter:
       descName: skewUncertainty
       useLargerThan: 1
-      threshold: 1000000.0
+      threshold: 1.0
