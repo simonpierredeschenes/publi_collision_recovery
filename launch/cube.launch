@@ -25,7 +25,8 @@
         <arg name="cloud_topic" value="/rslidar_points" unless="$(arg deskewed)"/>
         <arg name="input_filters_config" value="$(find publi_collision_recovery)/params/cube_al-nuaimi_input_filters.yaml" if="$(eval min(max(arg('skew_model')-2, 0), 1))"/>
         <arg name="input_filters_config" value="$(find publi_collision_recovery)/params/cube_input_filters.yaml" unless="$(eval min(max(arg('skew_model')-2, 0), 1))"/>
-        <arg name="post_filters_config" value="$(find publi_collision_recovery)/params/cube_post_filters.yaml" if="$(arg use_skew_weights)"/>
+        <arg name="post_filters_config" value="$(find publi_collision_recovery)/params/cube_al-nuaimi_post_filters.yaml" if="$(eval arg('use_skew_weights') * min(max(arg('skew_model')-2, 0), 1))"/>
+        <arg name="post_filters_config" value="$(find publi_collision_recovery)/params/cube_post_filters.yaml" if="$(eval arg('use_skew_weights') * (1 - min(max(arg('skew_model')-2, 0), 1)))"/>
         <arg name="post_filters_config" value="$(find publi_collision_recovery)/params/cube_no_model_post_filters.yaml" unless="$(arg use_skew_weights)"/>
 
         <param name="/use_sim_time" value="true"/>
