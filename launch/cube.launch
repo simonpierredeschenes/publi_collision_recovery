@@ -34,9 +34,6 @@
         <node pkg="tf" type="static_transform_publisher" name="imu_tf_pub" args="0.02255 0.054 0.0435 -1.57079632679 0 0 base_link mti30 100" />
         <node pkg="tf" type="static_transform_publisher" name="lidar_tf_pub" args="0 0.08745 0.0398 -1.57079632679 0 0 mti30 rslidar16 100" />
 
-	<!-- <include file="$(find publi_collision_recovery)/launch/lidar.launch">
-                <arg name="real_time" value="$(arg real_time)"/>
-        </include> -->
 	<node pkg="rslidar_pointcloud_stamped" type="cloud_node_stamped" name="cloud_node_stamped" output="screen">
                 <remap from="rslidar_packets" to="/rslidar16_packets"/>
                 <remap from="rslidar_packets_difop" to="/rslidar16_packets_difop"/>
@@ -51,7 +48,7 @@
                 <param name="channel_path" value="$(find rslidar_pointcloud)/data/configuration_files_rig/ChannelNum.csv" />
         </node>
 
-        <node pkg="pointcloud_motion_deskew" type="pointcloud2_deskew_node" name="pointcloud2_deskew_node" output="screen">
+        <node pkg="pointcloud_motion_deskew" type="pointcloud2_deskew_node" name="pointcloud2_deskew_node">
                 <remap from="input_point_cloud" to="/rslidar_points"/>
                 <remap from="output_point_cloud" to="/rslidar_points_deskewed"/>
                 <param name="fixed_frame_for_laser" value="odom"/>
@@ -113,5 +110,5 @@
 
         <node pkg="rviz" type="rviz" name="rviz" args="-d $(find publi_collision_recovery)/cfg/cube.rviz"/>
 
-        <node pkg="rosbag" type="play" name="play" output="screen" args="--clock -r 0.08 $(arg bagfile)"/>
+        <node pkg="rosbag" type="play" name="play" output="screen" args="--clock -d 2 -r 0.08 $(arg bagfile)"/>
 </launch>
