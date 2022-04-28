@@ -21,8 +21,8 @@
 - SimpleSensorNoiseDataPointsFilter:
     sensorType: 6
 
-- VoxelGridDataPointsFilter:
-    vSizeX: 0.05
-    vSizeY: 0.05
-    vSizeZ: 0.05
+#- VoxelGridDataPointsFilter:
+#    vSizeX: 0.05
+#    vSizeY: 0.05
+#    vSizeZ: 0.05
 
