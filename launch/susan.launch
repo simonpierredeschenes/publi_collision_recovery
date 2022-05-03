@@ -50,7 +50,7 @@
                 <param name="map_update_condition" value="overlap"/>
                 <param name="map_update_overlap" value="0.9"/>
                 <param name="sensor_max_range" value="100.0"/>
-                <param name="min_dist_new_point" value="0.01"/>
+                <param name="min_dist_new_point" value="0.05"/>
                 <param name="compute_prob_dynamic" value="true"/>
                 <param name="prior_dynamic" value="0.2" />
                 <param name="threshold_dynamic" value="0.5" />
